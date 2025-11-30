@@ -1,0 +1,17 @@
+[versions]
+fastutil = "8.5.18"
+gson = "2.13.2"
+guava = "33.5.0-jre"
+jmh = "1.37"
+streamex = "0.8.4"
+z3 = "4.14.1"
+
+[libraries]
+fastutil = { module = "it.unimi.dsi:fastutil", version.ref = "fastutil" }
+gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
+guava = { module = "com.google.guava:guava", version.ref = "guava" }
+jmh-annprocessor = { module = "org.openjdk.jmh:jmh-generator-annprocess", version.ref = "jmh" }
+jmh-core = { module = "org.openjdk.jmh:jmh-core", version.ref = "jmh" }
+kotlin-stdlib-jdk8 = { module = "org.jetbrains.kotlin:kotlin-stdlib-jdk8" }
+streamex = { module = "one.util:streamex", version.ref = "streamex" }
+z3 = { module = "tools.aqua:z3-turnkey", version.ref = "z3" }

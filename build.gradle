@@ -1,0 +1,59 @@
+plugins {
+    id 'java'
+    id 'org.jetbrains.kotlin.jvm' version '2.2.21'
+    // id 'nl.littlerobots.version-catalog-update' version '1.0.1'
+}
+
+group 'me.sizableshrimp.adventofcode2025'
+version '0.1.0'
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(25)
+
+kotlin {
+    jvmToolchain(25)
+}
+
+repositories {
+    mavenCentral()
+}
+
+sourceSets {
+    util
+    mainKotlin
+}
+
+configurations {
+    implementation.extendsFrom utilImplementation
+    animationProcessor.extendsFrom utilAnnotationProcessor
+    runtimeOnly.extendsFrom utilRuntimeOnly
+    compileOnly.extendsFrom utilCompileOnly
+
+    mainKotlinImplementation.extendsFrom utilImplementation
+    mainKotlinAnimationProcessor.extendsFrom utilAnnotationProcessor
+    mainKotlinRuntimeOnly.extendsFrom utilRuntimeOnly
+    mainKotlinCompileOnly.extendsFrom utilCompileOnly
+}
+
+dependencies {
+    mainKotlinImplementation sourceSets.util.output
+    implementation sourceSets.util.output
+
+    utilImplementation(libs.streamex)
+    utilImplementation(libs.guava)
+    utilImplementation(libs.gson)
+    utilImplementation(libs.fastutil)
+    utilImplementation(libs.z3)
+    utilImplementation(libs.kotlin.stdlib.jdk8)
+
+    testImplementation(libs.jmh.core)
+    testAnnotationProcessor(libs.jmh.annprocessor)
+}
+
+tasks.register('jmh', JavaExec) {
+    dependsOn 'testClasses'
+    mainClass = 'org.openjdk.jmh.Main'
+    classpath = sourceSets.test.compileClasspath + sourceSets.test.runtimeClasspath
+    def toolchain = project.extensions.getByType(JavaPluginExtension.class).toolchain
+    def service = project.extensions.getByType(JavaToolchainService.class)
+    javaLauncher = service.launcherFor(toolchain)
+}
