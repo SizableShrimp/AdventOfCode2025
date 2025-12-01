@@ -25,31 +25,42 @@ package me.sizableshrimp.adventofcode2025.days
 
 import me.sizableshrimp.adventofcode2025.templates.Day
 import me.sizableshrimp.adventofcode2025.util.*
+import kotlin.math.abs
 
 class Day01 : Day() {
+    // One-liner solution
+    // override fun evaluate() =
+    //     this.lines.fold(Triple(50, 0, 0)) { (d, p1, p2), l ->
+    //         (d + (if (l[0] == 'L') -1 else 1) * l.substring(1).toInt()).let {
+    //             it.mod(100).let { m ->
+    //                 Triple(
+    //                     m,
+    //                     p1 + 1 - m.coerceAtMost(1),
+    //                     p2 + abs(it) / 100 + if (d != 0 && it <= 0) 1 else 0
+    //                 )
+    //             }
+    //         }
+    //     }.toList().drop(1).toResult()
+
     override fun evaluate(): Result {
         var dial = 50
         var part1 = 0
         var part2 = 0
 
         this.lines.forEach { l ->
-            val left = l[0] == 'L'
             val num = l.substring(1).toInt()
 
-            if ((dial + (if (left) -num else num)).mod(100) == 0)
+            val next = dial + (if (l[0] == 'L') -num else num)
+
+            if (dial != 0 && next <= 0)
+                part2++
+
+            part2 += abs(next) / 100
+
+            dial = next.mod(100)
+
+            if (dial == 0)
                 part1++
-
-            for (i in 0..<num) {
-                dial += if (left) -1 else 1
-
-                if (dial == 100)
-                    dial = 0
-                else if (dial == -1)
-                    dial = 99
-
-                if (dial == 0)
-                    part2++
-            }
         }
 
         return Result.of(part1, part2)
