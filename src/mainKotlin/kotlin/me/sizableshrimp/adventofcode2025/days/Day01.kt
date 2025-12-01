@@ -28,7 +28,31 @@ import me.sizableshrimp.adventofcode2025.util.*
 
 class Day01 : Day() {
     override fun evaluate(): Result {
-        return Result.of(null, null)
+        var dial = 50
+        var part1 = 0
+        var part2 = 0
+
+        this.lines.forEach { l ->
+            val left = l[0] == 'L'
+            val num = l.substring(1).toInt()
+
+            if ((dial + (if (left) -num else num)).mod(100) == 0)
+                part1++
+
+            for (i in 0..<num) {
+                dial += if (left) -1 else 1
+
+                if (dial == 100)
+                    dial = 0
+                else if (dial == -1)
+                    dial = 99
+
+                if (dial == 0)
+                    part2++
+            }
+        }
+
+        return Result.of(part1, part2)
     }
 
     companion object {
