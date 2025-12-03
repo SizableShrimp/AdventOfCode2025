@@ -25,26 +25,21 @@ package me.sizableshrimp.adventofcode2025.days
 
 import me.sizableshrimp.adventofcode2025.templates.Day
 import me.sizableshrimp.adventofcode2025.util.*
-import kotlin.math.max
 
 class Day03 : Day() {
     override fun evaluate(): Result {
         val banks = this.lines.map { l -> l.map { it.digitToInt() } }
 
-        return Result.of(banks.sumOf { dfs(it, scale = 10L) }, banks.sumOf { dfs(it) })
+        return Result.of(
+            banks.sumOf { calc(it, 2, 10L) },
+            banks.sumOf { calc(it, 12, 100_000_000_000L) }
+        )
     }
 
-    private fun dfs(
-        bank: List<Int>, bestSeen: LongArray = LongArray(bank.size) { 0L },
-        idx: Int = 0, currVal: Long = 0L, scale: Long = 100_000_000_000L
-    ): Long {
-        if (scale == 0L) return currVal
-        if (idx >= bank.size) return 0L
-        if (bestSeen[idx] > currVal + scale * 10) return currVal // Can't possibly do better than the previously best seen at this index
+    private fun calc(bank: List<Int>, depth: Int, scale: Long, idx: Int = 0): Long {
+        val bestIdx = idx + bank.slice(idx..<bank.size - depth + 1).argmax()
 
-        val best = max(dfs(bank, bestSeen, idx + 1, currVal, scale), dfs(bank, bestSeen, idx + 1, currVal + scale * bank[idx], scale / 10))
-        bestSeen[idx] = best
-        return best
+        return if (scale == 1L) bank[bestIdx].toLong() else scale * bank[bestIdx] + calc(bank, depth - 1, scale / 10, bestIdx + 1)
     }
 
     companion object {

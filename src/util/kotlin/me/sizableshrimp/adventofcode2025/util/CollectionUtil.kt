@@ -76,6 +76,10 @@ fun <T> List<T>.toPair(): Pair<T, T> {
     return this[0] to this[1]
 }
 
+fun <T : Comparable<T>> Iterable<T>.argmax() = this.withIndex().maxBy { (_, v) -> v }.index
+
+fun <T : Comparable<T>> Iterable<T>.argmin() = this.withIndex().minBy { (_, v) -> v }.index
+
 fun IntCollection.max(): Int {
     val iterator = this.intIterator()
     require(iterator.hasNext()) { "Collection is empty" }
