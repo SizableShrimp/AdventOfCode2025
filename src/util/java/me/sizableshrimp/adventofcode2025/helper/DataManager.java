@@ -117,11 +117,11 @@ public class DataManager {
                     .header("Cookie", "session=" + sessionCookie)
                     .build();
 
-            HttpResponse<Stream<String>> response;
+            List<String> lines;
             try (HttpClient httpClient = HttpClient.newHttpClient()) {
-                response = httpClient.send(request, HttpResponse.BodyHandlers.ofLines());
+                HttpResponse<Stream<String>> response = httpClient.send(request, HttpResponse.BodyHandlers.ofLines());
+                lines = response.body().toList();
             }
-            List<String> lines = response.body().toList();
 
             if (isInputInvalid(lines)) {
                 // Input is invalid. Error out without saving the input data to disk.
