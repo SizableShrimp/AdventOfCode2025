@@ -867,8 +867,6 @@ inline fun Array<BooleanArray>.filter2D(predicate: (x: Int, y: Int, Boolean) -> 
 }
 // endregion
 
-@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
-@OverloadResolutionByLambdaReturnType
 inline fun <T> Array<Array<T>>.sumOf2D(selector: (Coordinate, T) -> Int): Int {
     var sum = 0
 
@@ -879,8 +877,6 @@ inline fun <T> Array<Array<T>>.sumOf2D(selector: (Coordinate, T) -> Int): Int {
     return sum
 }
 
-@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
-@OverloadResolutionByLambdaReturnType
 inline fun <T> Array<Array<T>>.sumOf2D(selector: (x: Int, y: Int, T) -> Int): Int {
     var sum = 0
 
@@ -916,8 +912,6 @@ inline fun <T> Array<Array<T>>.sumOf2D(selector: (x: Int, y: Int, T) -> Long): L
 }
 
 // region Array<Array>#sumOf2D for primitives
-@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
-@OverloadResolutionByLambdaReturnType
 inline fun Array<IntArray>.sumOf2D(selector: (Coordinate, Int) -> Int): Int {
     var sum = 0
 
@@ -928,8 +922,6 @@ inline fun Array<IntArray>.sumOf2D(selector: (Coordinate, Int) -> Int): Int {
     return sum
 }
 
-@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
-@OverloadResolutionByLambdaReturnType
 inline fun Array<IntArray>.sumOf2D(selector: (x: Int, y: Int, Int) -> Int): Int {
     var sum = 0
 
@@ -988,8 +980,6 @@ inline fun Array<LongArray>.sumOf2D(selector: (x: Int, y: Int, Long) -> Long): L
     return sum
 }
 
-@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
-@OverloadResolutionByLambdaReturnType
 inline fun Array<CharArray>.sumOf2D(selector: (Coordinate, Char) -> Int): Int {
     var sum = 0
 
@@ -1000,8 +990,6 @@ inline fun Array<CharArray>.sumOf2D(selector: (Coordinate, Char) -> Int): Int {
     return sum
 }
 
-@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
-@OverloadResolutionByLambdaReturnType
 inline fun Array<CharArray>.sumOf2D(selector: (x: Int, y: Int, Char) -> Int): Int {
     var sum = 0
 
@@ -1036,8 +1024,6 @@ inline fun Array<CharArray>.sumOf2D(selector: (x: Int, y: Int, Char) -> Long): L
     return sum
 }
 
-@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
-@OverloadResolutionByLambdaReturnType
 inline fun Array<ByteArray>.sumOf2D(selector: (Coordinate, Byte) -> Int): Int {
     var sum = 0
 
@@ -1048,8 +1034,6 @@ inline fun Array<ByteArray>.sumOf2D(selector: (Coordinate, Byte) -> Int): Int {
     return sum
 }
 
-@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
-@OverloadResolutionByLambdaReturnType
 inline fun Array<ByteArray>.sumOf2D(selector: (x: Int, y: Int, Byte) -> Int): Int {
     var sum = 0
 
@@ -1084,8 +1068,6 @@ inline fun Array<ByteArray>.sumOf2D(selector: (x: Int, y: Int, Byte) -> Long): L
     return sum
 }
 
-@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
-@OverloadResolutionByLambdaReturnType
 inline fun Array<DoubleArray>.sumOf2D(selector: (Coordinate, Double) -> Double): Double {
     var sum = 0.0
 
@@ -1096,8 +1078,6 @@ inline fun Array<DoubleArray>.sumOf2D(selector: (Coordinate, Double) -> Double):
     return sum
 }
 
-@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
-@OverloadResolutionByLambdaReturnType
 inline fun Array<DoubleArray>.sumOf2D(selector: (x: Int, y: Int, Double) -> Double): Double {
     var sum = 0.0
 
@@ -1108,8 +1088,6 @@ inline fun Array<DoubleArray>.sumOf2D(selector: (x: Int, y: Int, Double) -> Doub
     return sum
 }
 
-@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
-@OverloadResolutionByLambdaReturnType
 inline fun Array<FloatArray>.sumOf2D(selector: (Coordinate, Float) -> Float): Float {
     var sum = 0.0F
 
@@ -1120,8 +1098,6 @@ inline fun Array<FloatArray>.sumOf2D(selector: (Coordinate, Float) -> Float): Fl
     return sum
 }
 
-@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
-@OverloadResolutionByLambdaReturnType
 inline fun Array<FloatArray>.sumOf2D(selector: (x: Int, y: Int, Float) -> Float): Float {
     var sum = 0.0F
 
@@ -1132,8 +1108,6 @@ inline fun Array<FloatArray>.sumOf2D(selector: (x: Int, y: Int, Float) -> Float)
     return sum
 }
 
-@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
-@OverloadResolutionByLambdaReturnType
 inline fun Array<BooleanArray>.sumOf2D(selector: (Coordinate, Boolean) -> Int): Int {
     var sum = 0
 
@@ -1144,8 +1118,6 @@ inline fun Array<BooleanArray>.sumOf2D(selector: (Coordinate, Boolean) -> Int): 
     return sum
 }
 
-@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
-@OverloadResolutionByLambdaReturnType
 inline fun Array<BooleanArray>.sumOf2D(selector: (x: Int, y: Int, Boolean) -> Int): Int {
     var sum = 0
 
@@ -1175,6 +1147,162 @@ inline fun Array<BooleanArray>.sumOf2D(selector: (x: Int, y: Int, Boolean) -> Lo
 
     this.forEach2D { x, y, t ->
         sum += selector(x, y, t)
+    }
+
+    return sum
+}
+// endregion
+
+// region Array<Array>#count2D for primitives
+inline fun Array<IntArray>.count2D(selector: (Coordinate, Int) -> Boolean): Int {
+    var sum = 0
+
+    this.forEach2D { coord, t ->
+        if (selector(coord, t))
+            sum++
+    }
+
+    return sum
+}
+
+inline fun Array<IntArray>.count2D(selector: (x: Int, y: Int, Int) -> Boolean): Int {
+    var sum = 0
+
+    this.forEach2D { x, y, t ->
+        if (selector(x, y, t))
+            sum++
+    }
+
+    return sum
+}
+
+inline fun Array<LongArray>.count2D(selector: (Coordinate, Long) -> Boolean): Int {
+    var sum = 0
+
+    this.forEach2D { coord, t ->
+        if (selector(coord, t))
+            sum++
+    }
+
+    return sum
+}
+
+inline fun Array<LongArray>.count2D(selector: (x: Int, y: Int, Long) -> Boolean): Int {
+    var sum = 0
+
+    this.forEach2D { x, y, t ->
+        if (selector(x, y, t))
+            sum++
+    }
+
+    return sum
+}
+
+inline fun Array<CharArray>.count2D(selector: (Coordinate, Char) -> Boolean): Int {
+    var sum = 0
+
+    this.forEach2D { coord, t ->
+        if (selector(coord, t))
+            sum++
+    }
+
+    return sum
+}
+
+inline fun Array<CharArray>.count2D(selector: (x: Int, y: Int, Char) -> Boolean): Int {
+    var sum = 0
+
+    this.forEach2D { x, y, t ->
+        if (selector(x, y, t))
+            sum++
+    }
+
+    return sum
+}
+
+inline fun Array<ByteArray>.count2D(selector: (Coordinate, Byte) -> Boolean): Int {
+    var sum = 0
+
+    this.forEach2D { coord, t ->
+        if (selector(coord, t))
+            sum++
+    }
+
+    return sum
+}
+
+inline fun Array<ByteArray>.count2D(selector: (x: Int, y: Int, Byte) -> Boolean): Int {
+    var sum = 0
+
+    this.forEach2D { x, y, t ->
+        if (selector(x, y, t))
+            sum++
+    }
+
+    return sum
+}
+
+inline fun Array<DoubleArray>.count2D(selector: (Coordinate, Double) -> Boolean): Int {
+    var sum = 0
+
+    this.forEach2D { coord, t ->
+        if (selector(coord, t))
+            sum++
+    }
+
+    return sum
+}
+
+inline fun Array<DoubleArray>.count2D(selector: (x: Int, y: Int, Double) -> Boolean): Int {
+    var sum = 0
+
+    this.forEach2D { x, y, t ->
+        if (selector(x, y, t))
+            sum++
+    }
+
+    return sum
+}
+
+inline fun Array<FloatArray>.count2D(selector: (Coordinate, Float) -> Boolean): Int {
+    var sum = 0
+
+    this.forEach2D { coord, t ->
+        if (selector(coord, t))
+            sum++
+    }
+
+    return sum
+}
+
+inline fun Array<FloatArray>.count2D(selector: (x: Int, y: Int, Float) -> Boolean): Int {
+    var sum = 0
+
+    this.forEach2D { x, y, t ->
+        if (selector(x, y, t))
+            sum++
+    }
+
+    return sum
+}
+
+inline fun Array<BooleanArray>.count2D(selector: (Coordinate, Boolean) -> Boolean): Int {
+    var sum = 0
+
+    this.forEach2D { coord, t ->
+        if (selector(coord, t))
+            sum++
+    }
+
+    return sum
+}
+
+inline fun Array<BooleanArray>.count2D(selector: (x: Int, y: Int, Boolean) -> Boolean): Int {
+    var sum = 0
+
+    this.forEach2D { x, y, t ->
+        if (selector(x, y, t))
+            sum++
     }
 
     return sum
