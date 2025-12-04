@@ -141,6 +141,16 @@ fun <T> Array<Array<T>>.getCardinalNeighbors(coord: Coordinate) = Iterable {
     }
 }
 
+fun Set<Coordinate>.getCardinalNeighbors(coord: Coordinate) = Iterable {
+    iterator {
+        for (dir in Direction.cardinalDirections()) {
+            val next = coord.resolve(dir)
+            if (next in this@getCardinalNeighbors)
+                yield(dir to next)
+        }
+    }
+}
+
 fun <T> Array<Array<T>>.getOrdinalNeighbors(coord: Coordinate) = Iterable {
     iterator<Pair<Direction, Coordinate>> {
         for (dir in Direction.ordinalDirections()) {
@@ -151,11 +161,31 @@ fun <T> Array<Array<T>>.getOrdinalNeighbors(coord: Coordinate) = Iterable {
     }
 }
 
+fun Set<Coordinate>.getOrdinalNeighbors(coord: Coordinate) = Iterable {
+    iterator {
+        for (dir in Direction.ordinalDirections()) {
+            val next = coord.resolve(dir)
+            if (next in this@getOrdinalNeighbors)
+                yield(dir to next)
+        }
+    }
+}
+
 fun <T> Array<Array<T>>.getCardinalOrdinalNeighbors(coord: Coordinate) = Iterable {
     iterator<Pair<Direction, Coordinate>> {
         for (dir in Direction.cardinalOrdinalDirections()) {
             val next = coord.resolve(dir)
             if (GridHelper.isValid(this@getCardinalOrdinalNeighbors, next))
+                yield(dir to next)
+        }
+    }
+}
+
+fun Set<Coordinate>.getCardinalOrdinalNeighbors(coord: Coordinate) = Iterable {
+    iterator {
+        for (dir in Direction.cardinalOrdinalDirections()) {
+            val next = coord.resolve(dir)
+            if (next in this@getCardinalOrdinalNeighbors)
                 yield(dir to next)
         }
     }

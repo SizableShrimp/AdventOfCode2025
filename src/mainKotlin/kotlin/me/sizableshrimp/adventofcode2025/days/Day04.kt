@@ -53,6 +53,31 @@ class Day04 : SeparatedDay() {
         return this.grid.getCardinalOrdinalNeighbors(coord).count { (_, neighbor) -> this.grid[neighbor] } < 4
     }
 
+    // Implementation using immutable set of coords
+    // lateinit var startingCoords: Set<Coordinate>
+    //
+    // override fun parse() {
+    //     this.startingCoords = this.lines.findAllCoords('@')
+    // }
+    //
+    // override fun part1() = this.startingCoords.count { isAccessible(this.startingCoords, it) }
+    //
+    // override fun part2() = generateSequence(Pair(this.startingCoords, 0)) { (coords, part2) ->
+    //     var toAdd = 0
+    //     val remaining = coords.filterNotTo(mutableSetOf()) {
+    //         if (isAccessible(coords, it)) {
+    //             toAdd++
+    //             true
+    //         } else false
+    //     }
+    //
+    //     if (toAdd == 0) null else Pair(remaining, part2 + toAdd)
+    // }.last().second
+    //
+    // private fun isAccessible(coords: Set<Coordinate>, coord: Coordinate): Boolean {
+    //     return coords.getCardinalOrdinalNeighbors(coord).count() < 4
+    // }
+
     companion object {
         @JvmStatic
         fun main(args: Array<String>) {
