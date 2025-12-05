@@ -23,6 +23,12 @@
 
 package me.sizableshrimp.adventofcode2025.util
 
+val IntRange.size: Int
+    get() = this.last - this.first + 1
+
+val LongRange.size: Long
+    get() = this.last - this.first + 1
+
 fun IntRange.intersectWith(other: IntRange): IntRange? {
     val start = maxOf(this.first, other.first)
     val end = minOf(this.last, other.last)
