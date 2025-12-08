@@ -54,7 +54,9 @@ inline fun List<String>.toBooleanGrid(func: (Char) -> Boolean) =
 inline fun <reified T> List<String>.toGridWithCoord(func: (Coordinate, Char) -> T) =
     Array(this.size) { y -> Array(this[y].length) { x -> func(Coordinate.of(x, y), this[y][x]) } }
 
-fun List<String>.findFirstCoord(target: Char): Coordinate? {
+fun List<String>.findFirstCoord(target: Char) = findFirstCoordOrNull(target)!!
+
+fun List<String>.findFirstCoordOrNull(target: Char): Coordinate? {
     for ((y, row) in this.withIndex()) {
         for ((x, c) in row.withIndex()) {
             if (c == target)
