@@ -73,35 +73,100 @@ public record HyperCoordinate(int x, int y, int z, int w) {
     }
 
     /**
-     * Finds the Manhattan distance from this coordinate to the origin at (0, 0, 0, 0).
+     * Finds the Manhattan distance between this coordinate and the origin at (0, 0, 0, 0).
      *
-     * @return The Manhattan distance from this coordinate to the origin at (0, 0, 0, 0).
+     * @return The Manhattan distance between this coordinate and the origin at (0, 0, 0, 0).
      */
     public int distanceToOrigin() {
-        return distance(0, 0, 0, 0);
+        return distanceManhattan(0, 0, 0, 0);
     }
 
     /**
-     * Finds the Manhattan distance from this coordinate to (x2, y2, z2, w2).
+     * Finds the Manhattan distance between this coordinate and (x2, y2, z2, w2).
      *
      * @param x2 The x of the other coordinate.
      * @param y2 The y of the other coordinate.
      * @param z2 The z of the other coordinate.
      * @param w2 The w of the other coordinate.
-     * @return The Manhattan distance from this coordinate to (x2, y2, z2, w2).
+     * @return The Manhattan distance between this coordinate and (x2, y2, z2, w2).
      */
-    public int distance(int x2, int y2, int z2, int w2) {
+    public int distanceManhattan(int x2, int y2, int z2, int w2) {
         return Math.abs(this.x - x2) + Math.abs(this.y - y2) + Math.abs(this.z - z2) + Math.abs(this.w - w2);
     }
 
     /**
-     * Finds the Manhattan distance from this coordinate to the other coordinate specified.
+     * Finds the Manhattan distance between this coordinate and the other specified coordinate.
      *
      * @param other The coordinate object to compare with.
-     * @return The Manhattan distance from this coordinate to the other coordinate specified.
+     * @return The Manhattan distance between this coordinate and the other specified coordinate.
      */
-    public int distance(HyperCoordinate other) {
-        return distance(other.x, other.y, other.z, other.w);
+    public int distanceManhattan(HyperCoordinate other) {
+        return distanceManhattan(other.x, other.y, other.z, other.w);
+    }
+
+    /**
+     * Finds the square of the Euclidean distance between this coordinate and (x2, y2, z2, w2).
+     *
+     * @param x2 The x of the other coordinate.
+     * @param y2 The y of the other coordinate.
+     * @param z2 The z of the other coordinate.
+     * @return The square of the Euclidean distance between this coordinate and (x2, y2, z2, w2).
+     */
+    public long distanceSquared(int x2, int y2, int z2, int w2) {
+        long xDiff = this.x - x2;
+        long yDiff = this.y - y2;
+        long zDiff = this.z - z2;
+        long wDiff = this.w - w2;
+
+        return xDiff * xDiff + yDiff * yDiff + zDiff * zDiff + wDiff * wDiff;
+    }
+
+    /**
+     * Finds the square of the Euclidean distance between this coordinate and the other specified coordinate.
+     *
+     * @param other The coordinate object to compare with.
+     * @return The square of the Euclidean distance between this coordinate and the other specified coordinate.
+     */
+    public double distanceSquared(HyperCoordinate other) {
+        return this.distanceSquared(other.x, other.y, other.z, other.w);
+    }
+
+    /**
+     * Finds the Euclidean distance between this coordinate and (x2, y2, z2, w2).
+     *
+     * @param x2 The x of the other coordinate.
+     * @param y2 The y of the other coordinate.
+     * @param z2 The z of the other coordinate.
+     * @return The Euclidean distance between this coordinate and (x2, y2, z2, w2).
+     */
+    public double distanceSqrt(int x2, int y2, int z2, int w2) {
+        return Math.sqrt(this.distanceSquared(x2, y2, z2, w2));
+    }
+
+    /**
+     * Finds the Euclidean distance between this coordinate and the other specified coordinate.
+     *
+     * @param other The coordinate object to compare with.
+     * @return The Euclidean distance between this coordinate and the other specified coordinate.
+     */
+    public double distanceSqrt(HyperCoordinate other) {
+        return this.distanceSqrt(other.x, other.y, other.z, other.w);
+    }
+
+    public int component1() {
+        return this.x;
+    }
+
+    public int component2() {
+        return this.y;
+    }
+
+    public int component3() {
+        return this.z;
+    }
+
+    public int component4() {
+        return this.w;
     }
 
     @Override

@@ -73,10 +73,13 @@ public class DisjointSet {
 
     /**
      * Unify two disjointed sets into a merged set.
+     *
+     * @return {@code true} if two sets were merged, {@code false} otherwise
+     * (specifically, when the two items are already part of the same set)
      */
-    public void union(int x, int y) {
+    public boolean union(int x, int y) {
         if (x == y)
-            return;
+            return false;
 
         int xRoot = find(x);
         int yRoot = find(y);
@@ -91,7 +94,10 @@ public class DisjointSet {
                     this.rank[xRoot]++;
             }
             this.numSets--;
+            return true;
         }
+
+        return false;
     }
 
     public static <T> DisjointSet findClusters(List<T> data, BiPredicate<T, T> inSameCluster) {
@@ -129,6 +135,17 @@ public class DisjointSet {
         }
 
         return result;
+    }
+
+    public Int2IntArrayMap resolveSizes() {
+        Int2IntArrayMap map = new Int2IntArrayMap(this.numSets);
+
+        for (int i = 0; i < this.parent.length; i++) {
+            int root = find(i);
+            map.mergeInt(root, 1, Integer::sum);
+        }
+
+        return map;
     }
 
     public int getNumSets() {
