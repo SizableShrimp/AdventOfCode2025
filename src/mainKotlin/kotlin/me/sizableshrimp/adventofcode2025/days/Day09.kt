@@ -35,10 +35,15 @@ class Day09 : Day() {
     override fun evaluate(): Result {
         val coords = this.lines.map { LongCoordinate.parse(it) }
         val horizRanges = mutableMapOf<Long, MutableList<Pair<Long, Long>>>()
+        val yVals = coords.map { it.y }.distinct().sorted()
 
         (coords + listOf(coords[0])).windowed(2) { (a, b) ->
             if (a.x == b.x) {
-                for (y in (min(a.y, b.y) + 1)..<max(a.y, b.y)) {
+                val minY = min(a.y, b.y) + 1
+                val maxY = max(a.y, b.y) - 1
+                for (y in yVals) {
+                    if (y < minY) continue
+                    if (y > maxY) break
                     horizRanges.getOrPut(y, ::mutableListOf).add(a.x to a.x)
                 }
             } else {
@@ -65,7 +70,8 @@ class Day09 : Day() {
             val maxX = max(a.x, b.x)
             val maxY = max(a.y, b.y)
 
-            for (y in minY..maxY) {
+            for (y in yVals) {
+                if (y !in minY..maxY) continue
                 val horiz = horizRanges[y]!!
                 if (minX < horiz.first().first) continue@loop
                 val (evenOdds, wow) = horiz.withIndex().first { (_, l) -> l.first <= minX }
