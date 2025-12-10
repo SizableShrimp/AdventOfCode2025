@@ -24,8 +24,8 @@
 package me.sizableshrimp.adventofcode2025.days
 
 import me.sizableshrimp.adventofcode2025.helper.Itertools
+import me.sizableshrimp.adventofcode2025.templates.Coordinate
 import me.sizableshrimp.adventofcode2025.templates.Day
-import me.sizableshrimp.adventofcode2025.templates.LongCoordinate
 import me.sizableshrimp.adventofcode2025.util.*
 import kotlin.math.abs
 import kotlin.math.max
@@ -33,8 +33,8 @@ import kotlin.math.min
 
 class Day09 : Day() {
     override fun evaluate(): Result {
-        val coords = this.lines.map { LongCoordinate.parse(it) }
-        val horizRanges = mutableMapOf<Long, MutableList<Pair<Long, Long>>>()
+        val coords = this.lines.map { Coordinate.parse(it) }
+        val horizRanges = mutableMapOf<Int, MutableList<Pair<Int, Int>>>()
         val yVals = coords.map { it.y }.distinct().sorted()
 
         (coords + listOf(coords[0])).windowed(2) { (a, b) ->
@@ -59,7 +59,7 @@ class Day09 : Day() {
 
         loop@ for ((a, b) in combos) {
             val dimensions = (b - a)
-            val size = (abs(dimensions.x) + 1) * (abs(dimensions.y) + 1)
+            val size = (abs(dimensions.x) + 1).toLong() * (abs(dimensions.y) + 1)
             part1 = max(part1, size)
 
             // Don't bother doing an expensive calculation for part 2 if it's impossible to be better
