@@ -68,6 +68,23 @@ class Day10 : Day() {
 
             part1 += best
 
+            // val matrix = Array(joltages.size) { IntArray(buttons.size + 1) }
+            //
+            // for ((y, jolts) in joltages.withIndex()) {
+            //     matrix[y][matrix[0].lastIndex] = jolts;
+            // }
+            //
+            // for ((x, button) in buttons.withIndex()) {
+            //     for (y in button) {
+            //         matrix[y][x] = 1
+            //     }
+            // }
+            //
+            // check(LinearAlgebra.solve(matrix))
+
+            // TODO: Switch to linear algebra on the RREF matrix, then do some sort of search over
+            //  the remaining parameters (non-leading variables) to minimize the number of button presses
+
             val context = Context()
             val optimize = context.mkOptimize()
 

@@ -64,6 +64,10 @@ public class MathUtil {
         return result;
     }
 
+    public static int lcm(int a, int b) {
+        return Math.abs(a * b) / gcd(a, b);
+    }
+
     public static long lcm(int... numbers) {
         long result = numbers[0];
 

@@ -24,6 +24,7 @@
 package me.sizableshrimp.adventofcode2025.util
 
 import me.sizableshrimp.adventofcode2025.helper.MathUtil
+import me.sizableshrimp.adventofcode2025.templates.Fraction
 
 infix fun Int.lcm(other: Int) = MathUtil.lcm(this, other)
 
@@ -50,3 +51,11 @@ infix fun Long.gcd(other: Long) = MathUtil.gcd(this, other)
 fun LongArray.gcd() = MathUtil.gcd(*this)
 
 fun Collection<Long>.gcd() = this.toLongArray().gcd()
+
+operator fun Fraction.plus(other: Fraction): Fraction = this.plus(other)
+
+operator fun Fraction.minus(other: Fraction): Fraction = this.minus(other)
+
+operator fun Fraction.times(other: Fraction): Fraction = this.times(other)
+
+operator fun Fraction.div(other: Fraction): Fraction = this.divide(other)
