@@ -22,7 +22,7 @@ public record Fraction(int numerator, int denominator) {
     public Fraction plus(Fraction other) {
         int lcm = MathUtil.lcm(this.denominator, other.denominator);
 
-        return new Fraction(this.numerator * (lcm / this.denominator) + other.numerator * (lcm / other.denominator), lcm);
+        return simplify(this.numerator * (lcm / this.denominator) + other.numerator * (lcm / other.denominator), lcm);
     }
 
     /**
@@ -32,15 +32,11 @@ public record Fraction(int numerator, int denominator) {
     public Fraction minus(Fraction other) {
         int lcm = MathUtil.lcm(this.denominator, other.denominator);
 
-        return new Fraction(this.numerator * (lcm / this.denominator) - other.numerator * (lcm / other.denominator), lcm);
+        return simplify(this.numerator * (lcm / this.denominator) - other.numerator * (lcm / other.denominator), lcm);
     }
 
     public Fraction times(Fraction other) {
-        int newNum = this.numerator * other.numerator;
-        int newDenom = this.denominator * other.denominator;
-        int gcd = MathUtil.gcd(newNum, newDenom);
-
-        return new Fraction(newNum / gcd, newDenom / gcd);
+        return simplify(this.numerator * other.numerator, this.denominator * other.denominator);
     }
 
     /**
@@ -48,11 +44,17 @@ public record Fraction(int numerator, int denominator) {
      * The returned fraction will be simplified.
      */
     public Fraction divide(Fraction other) {
-        int newNum = this.numerator * other.denominator;
-        int newDenom = this.denominator * other.numerator;
-        int gcd = MathUtil.gcd(newNum, newDenom);
+        return simplify(this.numerator * other.denominator, this.denominator * other.numerator);
+    }
 
-        return new Fraction(newNum / gcd, newDenom / gcd);
+    private static Fraction simplify(int numerator, int denominator) {
+        if (denominator == -1) {
+            numerator = -numerator;
+            denominator = -denominator;
+        }
+        int gcd = MathUtil.gcd(numerator, denominator);
+
+        return new Fraction(numerator / gcd, denominator / gcd);
     }
 
     public double toDouble() {

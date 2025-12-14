@@ -25,6 +25,11 @@ package me.sizableshrimp.adventofcode2025.helper;
 
 public class MathUtil {
     public static int gcd(int a, int b) {
+        if (a < 0)
+            a = -a;
+        if (b < 0)
+            b = -b;
+
         while (b != 0) {
             int temp = b;
             b = a % b;
@@ -45,6 +50,11 @@ public class MathUtil {
     }
 
     public static long gcd(long a, long b) {
+        if (a < 0)
+            a = -a;
+        if (b < 0)
+            b = -b;
+
         while (b != 0) {
             long temp = b;
             b = a % b;

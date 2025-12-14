@@ -23,21 +23,60 @@
 
 package me.sizableshrimp.adventofcode2025.util
 
-fun <S, ID> searchBest(
+// TODO: Document all of these, including with examples!!
+//  And determine which ones should be deleted/refactored?
+fun <S> searchBest(
+    start: S, comparator: Comparator<S>, bfs: Boolean = true,
+    isFeasibleSolution: (S) -> Boolean, run: (state: S, addNext: (S) -> Unit) -> Unit
+): S? {
+    val queue = ArrayDeque<S>()
+    queue.add(start)
+
+    var best: S? = null
+
+    val addNext = outer@{ s: S ->
+        if (best != null && comparator.compare(best, s) <= 0) return@outer
+
+        if (isFeasibleSolution(s)) {
+            best = s
+        } else {
+            queue.add(s)
+        }
+    }
+
+    while (queue.isNotEmpty()) {
+        val state = if (bfs) queue.removeFirst() else queue.removeLast()
+        if (best != null && comparator.compare(best, state) <= 0) continue
+
+        run(state, addNext)
+    }
+
+    return best
+}
+
+fun <S : Comparable<S>> searchBest(
+    start: S, minimize: Boolean, bfs: Boolean = true,
+    isFeasibleSolution: (S) -> Boolean, run: (state: S, addNext: (S) -> Unit) -> Unit
+): S? = searchBest(
+    start, if (minimize) Comparator.naturalOrder<S>() else Comparator.reverseOrder<S>(),
+    bfs, isFeasibleSolution, run
+)
+
+fun <S, ID> searchBestDijkstras(
     start: S, target: ID, getId: (S) -> ID,
     comparator: Comparator<S>, bfs: Boolean = true,
     run: (state: S, addNext: (S) -> Unit) -> Unit
 ): Pair<Map<ID, S>, S?> {
     val queue = ArrayDeque<S>()
     val seen = mutableMapOf<ID, S>()
-    var min: S? = null
+    var best: S? = null
     queue.add(start)
     seen[getId(start)] = start
     val addNext = { s: S ->
         val id = getId(s)
         if (id == target) {
-            if (min == null || comparator.compare(s, min) < 0) {
-                min = s
+            if (best == null || comparator.compare(s, best) < 0) {
+                best = s
             }
         } else if (isBetterState(seen, comparator, id, s)) {
             seen[id] = s
@@ -47,26 +86,30 @@ fun <S, ID> searchBest(
 
     while (queue.isNotEmpty()) {
         val state = if (bfs) queue.removeFirst() else queue.removeLast()
-        if (min != null && comparator.compare(min, state) <= 0) continue
+        if (best != null && comparator.compare(best, state) <= 0) continue
         if (isWorseState(seen, comparator, getId(state), state)) continue
 
         run(state, addNext)
     }
 
-    return seen to min
+    return seen to best
 }
 
-fun <S : Comparable<S>, ID> searchBest(
+fun <S : Comparable<S>, ID> searchBestDijkstras(
     start: S, target: ID, getId: (S) -> ID,
-    bfs: Boolean = true, comparator: Comparator<S> = Comparator.naturalOrder(),
+    minimize: Boolean, bfs: Boolean = true,
     run: (state: S, addNext: (S) -> Unit) -> Unit
-) = searchBest(start, target, getId, comparator, bfs, run)
+) = searchBestDijkstras(
+    start, target, getId,
+    if (minimize) Comparator.naturalOrder<S>() else Comparator.reverseOrder<S>(),
+    bfs, run
+)
 
-fun <ID> searchBestSimple(
+fun <ID> searchBestDijkstrasSimple(
     start: ID, target: ID,
     bfs: Boolean = true, comparator: Comparator<Pair<ID, Int>> = Comparator.comparingInt { it.second },
     run: (state: ID, addNext: (ID) -> Unit) -> Unit
-) = searchBest(start to 0, target, { it.first }, comparator, bfs) { state, addNext ->
+) = searchBestDijkstras(start to 0, target, { it.first }, comparator, bfs) { state, addNext ->
     run(state.first) { next -> addNext(next to (state.second + 1)) }
 }
 
