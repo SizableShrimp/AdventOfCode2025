@@ -69,7 +69,7 @@ class Day10 : SeparatedDay() {
         val matrix = Array(joltages.size) { IntArray(buttons.size + 1) }
 
         for ((y, jolts) in joltages.withIndex()) {
-            matrix[y][matrix[0].lastIndex] = jolts;
+            matrix[y][matrix[0].lastIndex] = jolts
         }
 
         for ((x, button) in buttons.withIndex()) {
@@ -81,8 +81,8 @@ class Day10 : SeparatedDay() {
         check(LinearAlgebra.solve(matrix))
 
         val freeButtonsSet = buttons.indices.toMutableSet()
-        val staticButtons = mutableSetOf<Int>()
-        val dependentButtons = mutableSetOf<Int>()
+        // val staticButtons = mutableSetOf<Int>()
+        // val dependentButtons = mutableSetOf<Int>()
         val leadingXs = IntArray(matrix.size) { -1 }
         var leadingX = 0
         for ((y, row) in matrix.withIndex()) {
@@ -91,14 +91,15 @@ class Day10 : SeparatedDay() {
             if (leadingX in row.indices && row[leadingX] != 0) {
                 leadingXs[y] = leadingX
                 freeButtonsSet.remove(leadingX)
-                if (((leadingX + 1)..<(row.size - 1)).all { row[it] == 0 }) {
-                    staticButtons.add(leadingX)
-                } else {
-                    dependentButtons.add(leadingX)
-                }
+                // if (((leadingX + 1)..<(row.size - 1)).all { row[it] == 0 }) {
+                //     staticButtons.add(leadingX)
+                // } else {
+                //     dependentButtons.add(leadingX)
+                // }
             }
         }
         val freeButtons = freeButtonsSet.toList()
+        val upperBounds = buttons.map { btn -> btn.minOf { joltages.getInt(it) } }
 
         // println(matrix.contentDeepToString().replace("], [", "]\n["))
         // println("Free vars: ${freeButtons.size}, static vars: ${staticButtons.size}, dependent vars: ${dependentButtons.size}")
@@ -135,43 +136,50 @@ class Day10 : SeparatedDay() {
         outer@ while (queue.isNotEmpty()) {
             val state = queue.removeFirst()
 
-            for (i in state.minIncrement..<state.currFree.size) {
+            inner@ for (i in state.minIncrement..<state.currFree.size) {
                 val nextFree = state.currFree.toMutableList()
-                nextFree[i]++
+                if (++nextFree[i] > upperBounds[freeButtons[i]]) continue
                 val nextTotal = state.total + 1
+                var nextAllTotal = nextTotal
 
                 val isFeasible = matrix.withIndex().all { (y, row) ->
                     val leadingX = leadingXs[y]
                     if (leadingX == -1) return@all true
 
+                    val leadingVal = row[leadingX]
                     val lhs = nextFree.withIndex().sumOf { (i, num) -> num * row[freeButtons[i]] }
-                    val rhs = row.last() - lhs
+                    val rhs = row.last()
+                    val res = rhs - lhs
+                    nextAllTotal += res / leadingVal
 
-                    rhs >= 0 && rhs % row[leadingX] == 0
+                    if (res < 0) {
+                        var possible = false
+                        for (j in i..<freeButtons.size) {
+                            if (row[freeButtons[j]] <= 0) {
+                                possible = true
+                                break
+                            }
+                        }
+                        if (!possible) continue@inner // Impossible
+                    } else if (res > leadingVal * upperBounds[leadingX]) {
+                        var possible = false
+                        for (j in i..<freeButtons.size) {
+                            if (row[freeButtons[j]] >= 0) {
+                                possible = true
+                                break
+                            }
+                        }
+                        if (!possible)
+                            continue@inner // Impossible
+                    }
+
+                    res >= 0 && res % leadingVal == 0
                 }
                 val next = StateP2(nextTotal, nextFree, i)
 
-                if (isFeasible) {
-                    val nextAllTotal = nextTotal + matrix.withIndex().sumOf { (y, row) ->
-                        val leadingX = leadingXs[y]
-                        if (leadingX == -1) return@sumOf 0
-
-                        val lhs = nextFree.withIndex().sumOf { (i, num) -> num * row[freeButtons[i]] }
-                        val rhs = row.last() - lhs
-
-                        rhs / row[leadingX]
-                    }
-                    if (bestTotal == -1 || nextAllTotal < bestTotal) {
-                        best = next
-                        bestTotal = nextAllTotal
-                    }
-                }
-
-                // TODO: Figure out a better way to determine when to cut off the search;
-                //  this is an entirely arbitrary cutoff that works on my input,
-                //  but I would prefer to have something more mathematical and guaranteed.
-                if (best != null && best.total + 10 < nextTotal) {
-                    break@outer
+                if (isFeasible && (bestTotal == -1 || nextAllTotal < bestTotal)) {
+                    best = next
+                    bestTotal = nextAllTotal
                 }
 
                 queue.add(next)
