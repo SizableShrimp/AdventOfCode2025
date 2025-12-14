@@ -39,32 +39,39 @@ class Day10 : SeparatedDay() {
     }
 
     override fun part1() = this.machines.sumOf { (target, buttons, _) ->
-        val queue = ArrayDeque<StateP1>()
-        val seen = mutableSetOf<List<Boolean>>()
-        queue.add(StateP1(target.map { false }, -1, 0))
-        var best = Int.MAX_VALUE
+        val buttonMasks = buttons.map { btn -> btn.sumOf { 1L shl it } }
+        val targetMask = target.withIndex().filter { (_, b) ->  b }.sumOf { (i, _) -> 1L shl i }
 
-        while (!queue.isEmpty()) {
-            val state = queue.removeFirst()
-            val nextFlipped = state.totalFlipped + 1
-            if (nextFlipped >= best) continue
-            for (i in buttons.indices) {
-                if (i == state.lastFlipped) continue
-                val next = state.current.toMutableList()
-                for (j in buttons[i]) {
-                    next[j] = !next[j]
-                }
-                if (next == target) {
-                    best = nextFlipped
-                } else if (seen.add(next)) {
-                    queue.add(StateP1(next, i, nextFlipped))
+        fun dfs(totalFlipped: Int, lights: Long, idx: Int = 0, best: Int = Int.MAX_VALUE): Int {
+            val nextTotalFlipped = totalFlipped + 1
+            if (nextTotalFlipped >= best)
+                return best
+            var currBest = best
+
+            for (i in idx..<buttonMasks.size) {
+                // Flip lights
+                val nextLights = lights xor buttonMasks[i]
+
+                currBest = if (nextLights == targetMask) {
+                    nextTotalFlipped
+                } else {
+                    dfs(nextTotalFlipped, nextLights, i + 1, currBest)
                 }
             }
+
+            return currBest
         }
 
-        best
+        dfs(0, 0L)
     }
 
+    // The general strategy is to convert the button wirings and joltage requirements to a system of linear equations
+    // s.t. a valid assignment of button presses x satisfies Ax = b. Then, this system can be represented by the augmented matrix [A | b].
+    // Perform Gaussian elimination (using LinearAlgebra#solve) to get the matrix in Hermite normal form.
+    // (Effectively, it is reduced row-echelon form, but scaled accordingly by the denominators of the resulting rationals to get an
+    // all-integer matrix.) Then, perform a BFS on the remaining free variables to get an assignment that minimizes the total button presses.
+    // From talking with others and looking at their solutions, it appears that if you keep track of the square unimodular matrix U
+    // that gives H and consider the basis vectors, it's possible to more efficiently solve for the assignment without a BFS.
     override fun part2() = this.machines.sumOf { (_, buttons, joltages) ->
         val matrix = Array(joltages.size) { IntArray(buttons.size + 1) }
 
@@ -105,8 +112,8 @@ class Day10 : SeparatedDay() {
         // println("Free vars: ${freeButtons.size}, static vars: ${staticButtons.size}, dependent vars: ${dependentButtons.size}")
 
         var bestTotal = -1
-        var best: StateP2? = null
-        val start = StateP2(0, 0.repeat(freeButtons.size), 0)
+        var best: State? = null
+        val start = State(0, 0.repeat(freeButtons.size), 0)
 
         if (freeButtons.isEmpty() || matrix.withIndex().all { (y, row) ->
                 val leadingX = leadingXs[y]
@@ -130,11 +137,15 @@ class Day10 : SeparatedDay() {
         if (freeButtons.isEmpty())
             return@sumOf bestTotal
 
-        val queue = ArrayDeque<StateP2>()
+        val queue = ArrayDeque<State>()
         queue.add(start)
 
         outer@ while (queue.isNotEmpty()) {
-            val state = queue.removeFirst()
+            val state = queue.removeLast()
+
+            // Ensure that the assignment of free variables alone is not already worse than the best total (including leading vars) found thus far
+            if (bestTotal != -1 && state.total >= bestTotal)
+                continue
 
             inner@ for (i in state.minIncrement..<state.currFree.size) {
                 val nextFree = state.currFree.toMutableList()
@@ -175,7 +186,7 @@ class Day10 : SeparatedDay() {
 
                     res >= 0 && res % leadingVal == 0
                 }
-                val next = StateP2(nextTotal, nextFree, i)
+                val next = State(nextTotal, nextFree, i)
 
                 if (isFeasible && (bestTotal == -1 || nextAllTotal < bestTotal)) {
                     best = next
@@ -189,9 +200,7 @@ class Day10 : SeparatedDay() {
         bestTotal
     }
 
-    private data class StateP1(val current: List<Boolean>, val lastFlipped: Int, val totalFlipped: Int)
-
-    private data class StateP2(val total: Int, val currFree: List<Int>, val minIncrement: Int)
+    private data class State(val total: Int, val currFree: List<Int>, val minIncrement: Int)
 
     companion object {
         @JvmStatic

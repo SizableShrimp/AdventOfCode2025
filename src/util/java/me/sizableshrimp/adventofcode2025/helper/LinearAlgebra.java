@@ -28,16 +28,16 @@ public class LinearAlgebra {
         if (matrix[0].length == 1)
             return true;
 
-        for (int y = 0; y < matrix.length; y++) {
+        for (Fraction[] row : matrix) {
             boolean allZeros = true;
             for (int x = 0; x < matrix[0].length - 1; x++) {
-                if (!matrix[y][x].isZero()) {
+                if (!row[x].isZero()) {
                     allZeros = false;
                     break;
                 }
             }
 
-            if (allZeros && !matrix[y][matrix[0].length - 1].isZero())
+            if (allZeros && !row[matrix[0].length - 1].isZero())
                 return false;
         }
 
@@ -131,6 +131,7 @@ public class LinearAlgebra {
         }
     }
 
+    // TODO: I believe this transforms the matrix into row-style Hermite normal form
     public static boolean solve(int[][] matrix) {
         Fraction[][] fracMatrix = new Fraction[matrix.length][matrix[0].length];
 
