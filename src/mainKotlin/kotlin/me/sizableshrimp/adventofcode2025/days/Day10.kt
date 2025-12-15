@@ -92,7 +92,8 @@ class Day10 : SeparatedDay() {
         // val dependentButtons = mutableSetOf<Int>()
         val leadingXs = IntArray(matrix.size) { -1 }
         var leadingX = 0
-        for ((y, row) in matrix.withIndex()) {
+        for (y in matrix.indices) {
+            val row = matrix[y]
             while (leadingX in row.indices && row[leadingX] == 0)
                 leadingX++
             if (leadingX in row.indices && row[leadingX] != 0) {
@@ -115,21 +116,33 @@ class Day10 : SeparatedDay() {
         var best: State? = null
         val start = State(0, 0.repeat(freeButtons.size), 0)
 
-        if (freeButtons.isEmpty() || matrix.withIndex().all { (y, row) ->
+        var startingFeasible = freeButtons.isEmpty()
+        if (!startingFeasible) {
+            startingFeasible = true
+            for (y in matrix.indices) {
+                val row = matrix[y]
                 val leadingX = leadingXs[y]
-                if (leadingX == -1) return@all true
+                if (leadingX == -1) continue
 
                 val rhs = row.last()
 
-                rhs >= 0 && rhs % row[leadingX] == 0
-            }) {
-            bestTotal = matrix.withIndex().sumOf { (y, row) ->
+                if (!(rhs >= 0 && rhs % row[leadingX] == 0)) {
+                    startingFeasible = false
+                    break
+                }
+            }
+        }
+
+        if (startingFeasible) {
+            bestTotal = 0
+            for (y in matrix.indices) {
+                val row = matrix[y]
                 val leadingX = leadingXs[y]
-                if (leadingX == -1) return@sumOf 0
+                if (leadingX == -1) continue
 
                 val rhs = row.last()
 
-                rhs / row[leadingX]
+                bestTotal += rhs / row[leadingX]
             }
             best = start
         }
@@ -153,12 +166,17 @@ class Day10 : SeparatedDay() {
                 val nextTotal = state.total + 1
                 var nextAllTotal = nextTotal
 
-                val isFeasible = matrix.withIndex().all { (y, row) ->
+                var isFeasible = true
+                for (y in matrix.indices) {
+                    val row = matrix[y]
                     val leadingX = leadingXs[y]
-                    if (leadingX == -1) return@all true
+                    if (leadingX == -1) continue
 
                     val leadingVal = row[leadingX]
-                    val lhs = nextFree.withIndex().sumOf { (i, num) -> num * row[freeButtons[i]] }
+                    var lhs = 0
+                    for (i in nextFree.indices) {
+                        lhs += nextFree[i] * row[freeButtons[i]]
+                    }
                     val rhs = row.last()
                     val res = rhs - lhs
                     nextAllTotal += res / leadingVal
@@ -184,7 +202,10 @@ class Day10 : SeparatedDay() {
                             continue@inner // Impossible
                     }
 
-                    res >= 0 && res % leadingVal == 0
+                    if (!(res >= 0 && res % leadingVal == 0)) {
+                        isFeasible = false
+                        break
+                    }
                 }
                 val next = State(nextTotal, nextFree, i)
 
